@@ -44,9 +44,9 @@ var GifsView = React.createClass({
 
     _search: function(event) {
         if (event.which === 13) {
-            var query = this.refs.searchQuery.value
+            var query = event.target.value
             console.log(query)
-            event.value = ''
+            event.target.value = ''
             location.hash = `search/${query}`
         }
     },
@@ -160,7 +160,7 @@ var GiphyRouter = Backbone.Router.extend({
             data: {
                 q: 'south park',
                 api_key: 'dc6zaTOxFJmzC',
-                limit:24
+                limit:48
             }
         }
         $.ajax(ajaxParams).then((response)=>{
@@ -174,7 +174,7 @@ var GiphyRouter = Backbone.Router.extend({
             data: {
                 q: query,
                 api_key: 'dc6zaTOxFJmzC',
-                limit:24
+                limit:48
             }
         }
         $.ajax(ajaxParams).then((response)=>{
