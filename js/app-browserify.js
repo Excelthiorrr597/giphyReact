@@ -159,7 +159,8 @@ var GiphyRouter = Backbone.Router.extend({
             url: 'http://api.giphy.com/v1/gifs/search',
             data: {
                 q: 'south park',
-                api_key: 'dc6zaTOxFJmzC'
+                api_key: 'dc6zaTOxFJmzC',
+                limit:24
             }
         }
         $.ajax(ajaxParams).then((response)=>{
@@ -172,7 +173,8 @@ var GiphyRouter = Backbone.Router.extend({
             url: 'http://api.giphy.com/v1/gifs/search',
             data: {
                 q: query,
-                api_key: 'dc6zaTOxFJmzC'
+                api_key: 'dc6zaTOxFJmzC',
+                limit:24
             }
         }
         $.ajax(ajaxParams).then((response)=>{
