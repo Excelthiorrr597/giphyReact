@@ -76,6 +76,14 @@ img {
 /**
  * YOUR CODE HERE
  */
+#searchContainer {
+    border-bottom: 1px solid black;
+    display: flex;
+    #search {
+        margin: 20px auto;
+    }
+}
+
 #gifsContainer{
     display: flex;
     flex-wrap: wrap;

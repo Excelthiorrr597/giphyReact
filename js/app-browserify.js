@@ -19,7 +19,8 @@ if (module.hot) {
 import ReactDOM from 'react-dom'
 import React, {Component} from 'react'
 
-let $ = require('jquery')
+let $ = require('jquery'),
+    Backbone = require('backbone')
 
 var ajaxParams = {
     url: 'http://api.giphy.com/v1/gifs/search',
@@ -33,7 +34,7 @@ var GifsView = React.createClass({
 
     getInitialState: () => {
         return {
-            focusId: (location.hash.slice(1) || null)
+            focusId: null
         }
     },
 
@@ -41,26 +42,38 @@ var GifsView = React.createClass({
         return <SingleGif key={gif.id} focusId={this.state.focusId} walkieTalkie={this._walkieTalkie} gif={gif} />
     },
 
-    _handleClick: function() {
-        if (this.state.focusId) {
-            location.hash=''
+    _search: function(event) {
+        if (event.which === 13) {
+            var query = this.refs.searchQuery.value
+            console.log(query)
+            event.value = ''
+            location.hash = `search/${query}`
+        }
+    },
+
+    _walkieTalkie: function(gifId) {
+        if (this.state.focusId === null) {
+            this.setState({
+                focusId: gifId
+            })
+        }
+        else {
             this.setState({
                 focusId:null
             })
         }
     },
 
-    _walkieTalkie: function(gifId) {
-        this.setState({
-            focusId: gifId
-        })
-    },
-
     render: function() {
         var gifs = this.props.gifs
         return (
-            <div id="gifsContainer" onClick={this._handleClick} >
-                {gifs.map(this._getSingleGif)}
+            <div id="page">
+                <div id="searchContainer">
+                    <input id="search" type='text' placeholder='Search for Gifs' onKeyPress={this._search} ref='searchQuery' />
+                </div>
+                <div id="gifsContainer">
+                    {gifs.map(this._getSingleGif)}
+                </div>
             </div>
             )
     }
@@ -69,9 +82,9 @@ var GifsView = React.createClass({
 var SingleGif = React.createClass({
 
     _handleClick: function() {
+        console.log('click')
         var walkieTalkie = this.props.walkieTalkie,
             gifId = this.props.gif.id
-        location.hash = gifId
         walkieTalkie(gifId)
     },
 
@@ -91,7 +104,7 @@ var SingleGif = React.createClass({
                 width:'50%'
             }
 
-        if (focusId===gifId || location.hash.slice(1)===gifId) {
+        if (focusId===gifId) {
             styleObj = {
                 position:'fixed',
                 left:'0',
@@ -102,7 +115,6 @@ var SingleGif = React.createClass({
             }
         }
 
-        console.log(location.hash)
         return (
             <div className="singleGif" onClick={this._handleClick}>
                 <div style={styleObj} >
@@ -135,6 +147,43 @@ var GifDetails = React.createClass({
     }
 })
 
-$.ajax(ajaxParams).then((response)=>{
-    ReactDOM.render(<GifsView gifs={response.data} />, document.querySelector('#container'))
+var GiphyRouter = Backbone.Router.extend({
+
+    routes: {
+        'search/:query':'showSearchView',
+        'home':'showDefaultView'
+    },
+
+    showDefaultView: function() {
+        var ajaxParams = {
+            url: 'http://api.giphy.com/v1/gifs/search',
+            data: {
+                q: 'south park',
+                api_key: 'dc6zaTOxFJmzC'
+            }
+        }
+        $.ajax(ajaxParams).then((response)=>{
+            ReactDOM.render(<GifsView gifs={response.data} />, document.querySelector('#container'))
+        })
+    },
+
+    showSearchView: function(query) {
+        var ajaxParams = {
+            url: 'http://api.giphy.com/v1/gifs/search',
+            data: {
+                q: query,
+                api_key: 'dc6zaTOxFJmzC'
+            }
+        }
+        $.ajax(ajaxParams).then((response)=>{
+            ReactDOM.render(<GifsView gifs={response.data} />, document.querySelector('#container'))
+        })
+    },
+
+    initialize: function() {
+        location.hash='home'
+        Backbone.history.start()
+    }
 })
+
+var gr = new GiphyRouter()
