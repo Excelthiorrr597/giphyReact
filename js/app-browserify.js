@@ -25,7 +25,7 @@ let $ = require('jquery'),
 var ajaxParams = {
     url: 'http://api.giphy.com/v1/gifs/search',
     data: {
-        q: 'south park',
+        q: 'funny dog',
         api_key: 'dc6zaTOxFJmzC'
     }
 }
@@ -111,7 +111,7 @@ var SingleGif = React.createClass({
                 top:'0',
                 right:'0',
                 bottom:'0',
-                backgroundColor:'rgba(0,0,0,0.8)',
+                backgroundColor:'rgba(0,0,0,0.8)'
             }
         }
 
